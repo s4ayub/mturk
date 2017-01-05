@@ -1,10 +1,10 @@
 # SOURCE ---> http://www.toforge.com/tag/mturk/
 
 from boto.mturk.connection import MTurkConnection
-from boto.mturk.question import QuestionContent,Question,QuestionForm,Overview,AnswerSpecification,SelectionAnswer,FormattedContent,FreeTextAnswer
+from boto.mturk.question import QuestionContent,Question,QuestionForm,Overview,AnswerSpecification,SelectionAnswer,FormattedContent,FreeTextAnswer,HTMLQuestion
 
-ACCESS_ID ='AKIAIXKOKH2JJ73SMHWQ'
-SECRET_KEY = 'wLj+lCH+bd1JxGBObiO6Ef67ezdqFqXrVL1ItHpK'
+ACCESS_ID = 'fakefakefake'
+SECRET_KEY = 'fnklfjgklfg'
 HOST = 'mechanicalturk.sandbox.amazonaws.com'
 
 mtc = MTurkConnection(aws_access_key_id=ACCESS_ID, aws_secret_access_key=SECRET_KEY, host=HOST)
@@ -14,56 +14,71 @@ description = ('Visit a website and give us your opinion'
                ' and some personal comments')
 keywords = 'website, rating, opinions'
 
-ratings =[('Very Bad','-2'),
-         ('Bad','-1'),
-         ('Not bad','0'),
-         ('Good','1'),
-         ('Very Good','1')]
+# ratings =[('Very Bad','-2'),
+#          ('Bad','-1'),
+#          ('Not bad','0'),
+#          ('Good','1'),
+#          ('Very Good','1')]
 
-#---------------  BUILD OVERVIEW -------------------
+# #---------------  BUILD OVERVIEW -------------------
 
-overview = Overview()
-overview.append_field('Title', 'Give your opinion on this website')
-overview.append(FormattedContent('<a target="_blank"'
-                                 ' href="https://github.com/s4ayub">'
-                                 ' Shabab Ayub Github</a>'))
+# overview = Overview()
+# overview.append_field('Title', 'Give your opinion on this website')
+# overview.append(FormattedContent('<a target="_blank"'
+#                                  ' href="https://github.com/s4ayub">'
+#                                  ' Shabab Ayub Github</a>'))
 
-#---------------  BUILD QUESTION 1 -------------------
+# #---------------  BUILD QUESTION 1 -------------------
 
-qc1 = QuestionContent()
-qc1.append_field('Title','How the repos look?')
+# qc1 = QuestionContent()
+# qc1.append_field('Title','How the repos look?')
 
-fta1 = SelectionAnswer(min=1, max=1,style='dropdown',
-                      selections=ratings,
-                      type='text',
-                      other=False)
+# fta1 = SelectionAnswer(type='datetime-local',
+#                       other=False)
 
-q1 = Question(identifier='design',
-              content=qc1,
-              answer_spec=AnswerSpecification(fta1),
-              is_required=True)
+# q1 = Question(identifier='design',
+#               content=qc1,
+#               answer_spec=AnswerSpecification(fta1),
+#               is_required=True)
 
-#---------------  BUILD QUESTION 2 -------------------
+# #---------------  BUILD QUESTION 2 -------------------
 
-qc2 = QuestionContent()
-qc2.append_field('Title','Your personal comments')
+# qc2 = QuestionContent()
+# qc2.append_field('Title','Your personal comments')
 
-fta2 = FreeTextAnswer()
+# fta2 = FreeTextAnswer()
 
-q2 = Question(identifier="comments",
-              content=qc2,
-              answer_spec=AnswerSpecification(fta2))
+# q2 = Question(identifier="comments",
+#               content=qc2,
+#               answer_spec=AnswerSpecification(fta2))
 
-#--------------- BUILD THE QUESTION FORM -------------------
+# #---------------  BUILD HTMLQuestion -------------------
 
-question_form = QuestionForm()
-question_form.append(overview)
-question_form.append(q1)
-question_form.append(q2)
+# qc2 = HTMLQuestion()
+# qc2.append_field('Title','Your personal comments')
+
+# fta2 = FreeTextAnswer()
+
+# q2 = Question(identifier="comments",
+#               content=qc2,
+#               answer_spec=AnswerSpecification(fta2))
+
+# # #--------------- BUILD THE QUESTION FORM -------------------
+
+# # question_form = QuestionForm()
+# # question_form.append(overview)
+# # question_form.append(q1)
+# # question_form.append(q2)
+
+#--------------- BUILD THE HTMLQuestion -------------------
+
+html_form = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/><script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script></head><body><form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'><input type='hidden' value='' name='assignmentId' id='assignmentId'/><h1>What's up?</h1><img alt='image_url' class='center-block' height='900' src='https://s3.amazonaws.com/turkimportimages/popup2.png' width='600' /><p><input type='datetime-local' name='Input'></p><p><input type='datetime-local' name='Input1'></p><p><input type='submit' id='submitButton' value='Submit' /></p></form><script language='Javascript'>turkSetAssignmentID();</script></body></html>"
+frame_height = 600
+question_form = HTMLQuestion(html_form, frame_height)
 
 #--------------- CREATE THE HIT -------------------
 
-mtc.create_hit(questions=question_form,
+mtc.create_hit(question=question_form,
                max_assignments=1,
                title=title,
                description=description,
